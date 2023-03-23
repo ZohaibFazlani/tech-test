@@ -1,23 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import "./App.css";
 
 function App() {
+  const url = "https://randomuser.me/api/";
+  const [apiData, setApiData] = useState([]);
+
+  const fetchApiData = () => {
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => setApiData(data.results));
+  };
+  useEffect(() => {
+    const myInterval = setInterval(() => {
+      fetchApiData();
+    }, 2000);
+
+    return () => clearInterval(myInterval);
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {apiData.map((item) => (
+        <div className="container">
+          <div>
+            <h3>Email</h3>
+
+            <h3>{item.email}</h3>
+          </div>
+          <div>
+            <h3>Cell</h3>
+
+            <h3>{item.cell}</h3>
+          </div>
+          <div>
+            <h3>Picture</h3>
+            {item?.picture && <img src={item?.picture?.medium} />}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
